@@ -6,12 +6,15 @@ import (
 	"simple-crud/configs"
 	"simple-crud/helpers"
 	"simple-crud/models"
+	"simple-crud/requests"
+	"simple-crud/utils"
 	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 func CreateUser(c *fiber.Ctx) error {
@@ -77,6 +80,76 @@ func CreateUser(c *fiber.Ctx) error {
 	return helpers.ResponseJson(c, 200, "success", "User created successfully", user)
 }
 
-func LoginUser(c *fiber.Ctx) {
+func LoginUser(c *fiber.Ctx) error {
+	// init login request
+	data := new(requests.LoginRequest)
 
+	// validasi field in body json
+	if err := c.BodyParser(data); err != nil {
+		return helpers.ResponseJson(c, 400, "warning", err.Error(), []interface{}{})
+	}
+
+	// get validator & translator
+	validate := helpers.GetValidator()
+	translator := helpers.GetTranslator()
+
+	// validate data
+	if err := validate.Struct(data); err != nil {
+		// parse error validation
+		errors := make(map[string]string)
+		for _, err := range err.(validator.ValidationErrors) {
+			errors[err.Field()] = err.Translate(translator)
+		}
+
+		return helpers.ResponseJson(c, 422, "warning", errors, []interface{}{})
+	}
+
+	// init db
+	db := configs.DB.Db
+
+	// check email
+	var user models.User
+	if err := db.Where("email = ?", data.Email).First(&user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return helpers.ResponseJson(c, 401, "warning", "Email not found", []interface{}{})
+		}
+
+		return helpers.ResponseJson(c, 500, "warning", err.Error(), []interface{}{})
+	}
+
+	// compare password
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(data.Password)); err != nil {
+		return helpers.ResponseJson(c, 401, "warning", "Password incorrect", []interface{}{})
+	}
+
+	// check if a token already exists for the user
+	var userToken models.UserToken
+	if err := db.Where("user_id = ?", user.ID).First(&userToken).Error; err == nil {
+		return helpers.ResponseJson(c, 200, "success", "token already exists", userToken.Token)
+	}
+
+	// generate token
+	token, err := utils.GenerateJWT(user.ID)
+	if err != nil {
+		return helpers.ResponseJson(c, 500, "danger", err.Error(), []interface{}{})
+	}
+
+	// mapping data
+	userToken = models.UserToken{
+		UserID: user.ID,
+		Token:  token,
+	}
+
+	// save token
+	if err := db.Create(&userToken).Error; err != nil {
+		return helpers.ResponseJson(c, 500, "danger", err.Error(), []interface{}{})
+	}
+
+	// mapping response
+	userResponse := fiber.Map{
+		"user":  user,
+		"token": token,
+	}
+
+	return helpers.ResponseJson(c, 200, "success", "Login success", userResponse)
 }

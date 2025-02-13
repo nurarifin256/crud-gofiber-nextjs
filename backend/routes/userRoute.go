@@ -10,4 +10,5 @@ func SetUpUserRoutes(group fiber.Router) {
 	userRoute := group.Group("/user")
 
 	userRoute.Post("/", controllers.CreateUser)
+	userRoute.Post("/login", controllers.LoginUser)
 }
