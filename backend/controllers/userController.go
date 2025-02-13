@@ -27,8 +27,10 @@ func CreateUser(c *fiber.Ctx) error {
 	user.Password = c.FormValue("password")
 
 	file, err := c.FormFile("image")
+
+	// debug c.FormFile
 	if err != nil {
-		return helpers.ResponseJson(c, fiber.StatusBadRequest, "Error", err.Error(), []interface{}{})
+		return helpers.ResponseJson(c, fiber.StatusBadRequest, "error di sini", err.Error(), []interface{}{})
 	}
 
 	// create format filename save to database
@@ -73,4 +75,8 @@ func CreateUser(c *fiber.Ctx) error {
 	}
 
 	return helpers.ResponseJson(c, 200, "success", "User created successfully", user)
+}
+
+func LoginUser(c *fiber.Ctx) {
+
 }
