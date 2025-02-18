@@ -8,6 +8,7 @@ import (
 	"simple-crud/models"
 	"simple-crud/requests"
 	"simple-crud/utils"
+	"strconv"
 	"strings"
 	"time"
 
@@ -16,6 +17,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
+
+type UserDTO struct {
+	ID       uint   `json:"id"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+}
 
 func CreateUser(c *fiber.Ctx) error {
 	// init db
@@ -166,4 +173,46 @@ func LogoutUser(c *fiber.Ctx) error {
 
 		return helpers.ResponseJson(c, fiber.StatusOK, "success", "logout success", []interface{}{})
 	}
+}
+
+func ListUser(c *fiber.Ctx) error {
+	var users []UserDTO
+	var count int64
+
+	where := "1=1"
+	queryArgs := []interface{}{} // query arguments
+
+	limit, _ := strconv.Atoi(c.Query("limit", "10"))
+	skip, _ := strconv.Atoi(c.Query("skip", "0"))
+	search := c.Query("search", "")
+
+	if search != "" {
+		where += " AND (username ILIKE ? OR email ILIKE ?)"
+		queryArgs = append(queryArgs, "%"+search+"%", "%"+search+"%")
+	}
+
+	db := configs.DB.Db
+	query := db.Model(&models.User{}).Select("id, username, email")
+
+	if len(queryArgs) > 0 {
+		query = query.Where(where, queryArgs...)
+	}
+
+	result := query.Limit(limit).Offset(skip).Find(&users)
+	db.Model(&models.User{}).Count(&count)
+
+	if result.Error != nil {
+		return helpers.ResponseJson(c, fiber.StatusBadRequest, "warning", result.Error.Error(), []interface{}{})
+	}
+
+	if result.RowsAffected == 0 {
+		return helpers.ResponseJson(c, fiber.StatusOK, "success", "Data not found", []interface{}{})
+	}
+
+	response := fiber.Map{
+		"users": users,
+		"total": count,
+	}
+
+	return helpers.ResponseJson(c, fiber.StatusOK, "success", "List user", response)
 }
