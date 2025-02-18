@@ -155,19 +155,15 @@ func LoginUser(c *fiber.Ctx) error {
 }
 
 func LogoutUser(c *fiber.Ctx) error {
-	// init db
-	db := configs.DB.Db
-
-	// get user login
 	userId := c.Locals("user").(models.User)
+	db := configs.DB.Db
 	user := models.UserToken{}
 
-	// check user is valid
 	if err := db.Where("user_id = ?", userId.ID).First(&user).Error; err != nil {
 		return helpers.ResponseJson(c, fiber.StatusForbidden, "danger", err.Error(), []interface{}{})
 	} else {
-		// delete token
 		db.Delete(&user)
-		return helpers.ResponseJson(c, fiber.StatusOK, "success", "Logout success", []interface{}{})
+
+		return helpers.ResponseJson(c, fiber.StatusOK, "success", "logout success", []interface{}{})
 	}
 }
