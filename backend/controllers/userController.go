@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"simple-crud/configs"
 	"simple-crud/helpers"
@@ -215,4 +216,31 @@ func ListUser(c *fiber.Ctx) error {
 	}
 
 	return helpers.ResponseJson(c, fiber.StatusOK, "success", "List user", response)
+}
+
+func DeleteUser(c *fiber.Ctx) error {
+	id := c.Params("id")
+	db := configs.DB.Db
+	user := models.User{}
+
+	result := db.Where("id = ?", id).First(&user)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return helpers.ResponseJson(c, fiber.StatusNotFound, "warning", "User not found", []interface{}{})
+		}
+
+		return helpers.ResponseJson(c, fiber.StatusInternalServerError, "danger", result.Error, []interface{}{})
+	} else {
+		if err := db.Delete(&user).Error; err != nil {
+			return helpers.ResponseJson(c, fiber.StatusBadRequest, "warning", err.Error(), []interface{}{})
+		}
+
+		// delete image file
+		imagePath := fmt.Sprintf("./images/%s", user.Image)
+		if err := os.Remove(imagePath); err != nil {
+			return helpers.ResponseJson(c, fiber.StatusInternalServerError, "danger", err.Error(), []interface{}{})
+		}
+
+		return helpers.ResponseJson(c, fiber.StatusOK, "success", "User deleted successfully", []interface{}{})
+	}
 }

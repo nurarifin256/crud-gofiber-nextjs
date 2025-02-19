@@ -14,4 +14,5 @@ func SetUpUserRoutes(group fiber.Router) {
 	userRoute.Post("/login", controllers.LoginUser)
 	userRoute.Post("/logout", middleware.JWTProtected(), controllers.LogoutUser)
 	userRoute.Get("/", middleware.JWTProtected(), controllers.ListUser)
+	userRoute.Delete("/:id", middleware.JWTProtected(), controllers.DeleteUser)
 }
