@@ -244,3 +244,20 @@ func DeleteUser(c *fiber.Ctx) error {
 		return helpers.ResponseJson(c, fiber.StatusOK, "success", "User deleted successfully", []interface{}{})
 	}
 }
+
+func GetUserById(c *fiber.Ctx) error {
+	id := c.Params("id")
+	db := configs.DB.Db
+	user := models.User{}
+
+	result := db.Where("id = ?", id).First(&user)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return helpers.ResponseJson(c, fiber.StatusNotFound, "warning", "User not found", []interface{}{})
+		}
+
+		return helpers.ResponseJson(c, fiber.StatusInternalServerError, "danger", result.Error, []interface{}{})
+	}
+
+	return helpers.ResponseJson(c, fiber.StatusOK, "success", "Get user by id", user)
+}
