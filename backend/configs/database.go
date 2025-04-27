@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	// "simple-crud/models"
+	"simple-crud/models"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -48,10 +48,10 @@ func ConnectDb() {
 	db.Logger = db.Logger.LogMode(logger.Info)
 
 	// migration table
-	// db.AutoMigrate(
-	// 	&models.User{},
-	// 	&models.UserToken{},
-	// )
+	db.AutoMigrate(
+		&models.PurchaseOrder{},
+		&models.Item{},
+	)
 
 	DB = Dbinstance{
 		Db: db,
