@@ -20,6 +20,7 @@ func main() {
 
 	api := app.Group("/api/v1")
 	routes.SetUpUserRoutes(api)
+	routes.SetUpPurchaseOrderRoutes(api)
 
 	app.Listen(":3000")
 }

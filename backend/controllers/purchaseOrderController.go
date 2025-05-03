@@ -49,8 +49,29 @@ func CreatePurchaseOrder(c *fiber.Ctx) error {
 		return helpers.ResponseJson(c, 500, "error", err.Error(), []interface{}{})
 	}
 
+	// create purchase order items
+	var items []models.Item
+	for _, reqItem := range data.Items {
+		item := models.Item{
+			PoId:      transaction.ID,
+			ItemName:  reqItem.ItemName,
+			ItemCode:  reqItem.ItemCode,
+			ItemPrice: reqItem.ItemPrice,
+			ItemQty:   reqItem.ItemQty,
+		}
+
+		items = append(items, item)
+	}
+
+	if len(items) > 0 {
+		if err := db.Create(&items).Error; err != nil {
+			return helpers.ResponseJson(c, 500, "error", err.Error(), []interface{}{})
+		}
+	}
+
 	response := fiber.Map{
 		"transaction": transaction,
+		"items":       items,
 	}
 
 	return helpers.ResponseJson(c, 201, "success", "Purchase order created successfully", response)
