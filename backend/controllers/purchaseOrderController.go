@@ -1,10 +1,14 @@
 package controllers
 
 import (
+	"fmt"
+	"net/smtp"
+	"os"
 	"simple-crud/configs"
 	"simple-crud/helpers"
 	"simple-crud/models"
 	"simple-crud/requests"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -75,4 +79,36 @@ func CreatePurchaseOrder(c *fiber.Ctx) error {
 	}
 
 	return helpers.ResponseJson(c, 201, "success", "Purchase order created successfully", response)
+}
+
+func EmailPurchaseOrders(c *fiber.Ctx) error {
+	to := []string{"nurarifin.it@gmail.com"}
+	cc := []string{"nur.arifin@adis.co.id"}
+	subject := "Purchase Order"
+	message := "This is a test email from Fiber and Gorm"
+
+	err := sendEmail(to, cc, subject, message)
+	if err != nil {
+		return helpers.ResponseJson(c, 500, "error", err.Error(), nil)
+	}
+
+	return helpers.ResponseJson(c, 200, "success", "Email sent successfully", nil)
+}
+
+func sendEmail(to []string, cc []string, subject, message string) error {
+	body := "From : " + os.Getenv("EMAIL_SENDER") + "\n" +
+		"To : " + strings.Join(to, ", ") + "\n" +
+		"Cc : " + strings.Join(cc, ", ") + "\n" +
+		"Subject : " + subject + "\n\n" +
+		message
+
+	auth := smtp.PlainAuth("", os.Getenv("EMAIL_AUTH"), os.Getenv("EMAIL_PASSWORD"), os.Getenv("EMAIL_HOST"))
+	smtpAddr := fmt.Sprintf("%s:%s", os.Getenv("EMAIL_HOST"), os.Getenv("EMAIL_PORT"))
+
+	err := smtp.SendMail(smtpAddr, auth, os.Getenv("EMAIL_AUTH"), append(to, cc...), []byte(body))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
