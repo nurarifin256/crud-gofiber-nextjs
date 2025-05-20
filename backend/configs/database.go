@@ -49,8 +49,7 @@ func ConnectDb() {
 
 	// migration table
 	// db.AutoMigrate(
-	// 	&models.PurchaseOrder{},
-	// 	&models.Item{},
+	// 	&models.People{},
 	// )
 
 	DB = Dbinstance{
