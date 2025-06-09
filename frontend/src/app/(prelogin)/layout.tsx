@@ -1,5 +1,6 @@
 "use client";
 
+import AlertsProvider from "@/components/AlertContext";
 import { ConfirmProvider } from "material-ui-confirm";
 
 export default function PreLoginLayout({
@@ -9,7 +10,9 @@ export default function PreLoginLayout({
 }>){
     return (
         <ConfirmProvider>
-            
+            <AlertsProvider>
+                {children}
+            </AlertsProvider>
         </ConfirmProvider>
     )
 }

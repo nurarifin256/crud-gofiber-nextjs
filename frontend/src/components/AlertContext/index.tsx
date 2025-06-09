@@ -218,3 +218,6 @@ const AlertsProvider = ({ children }: { children: ReactNode }) => {
     </AlertContext.Provider>
   );
 };
+
+export { AlertContext}
+export default AlertsProvider;
