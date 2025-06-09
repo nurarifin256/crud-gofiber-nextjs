@@ -1,6 +1,13 @@
 import { subscribe } from "@/helpers/events";
 import { EVENT_ERROR_API_GENERAL } from "@/helpers/restApi";
-import { Box, Dialog, DialogContentText, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContentText,
+  Typography,
+} from "@mui/material";
 import {
   IconAlertCircleFilled,
   IconCircleCheckFilled,
@@ -100,8 +107,10 @@ const AlertsProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [setTitle, setContent, setButtonLabel, setOpen]);
 
+  const contextValue = useMemo(() => ({ show }), [show]);
+
   return (
-    <AlertContext.Provider value={{ show }}>
+    <AlertContext.Provider value={contextValue}>
       <Dialog
         fullWidth
         maxWidth="xs"
@@ -157,7 +166,55 @@ const AlertsProvider = ({ children }: { children: ReactNode }) => {
             </DialogContentText>
           </Box>
         )}
+        <DialogActions>
+          <Box
+            display="flex"
+            justifyContent={type === "confirm" ? "end" : "center"}
+            width="100%"
+            sx={{
+              padding: "24px",
+            }}
+            marginBottom={1}
+          >
+            {type === "confirm" && (
+              <Button
+                type="button"
+                variant="outlined"
+                color="secondary"
+                onClick={close}
+                sx={{
+                  width: "138px",
+                  height: "48px",
+                  borderRadius: "15px",
+                  marginRight: "16px",
+                }}
+              >
+                {buttonLabelCancel}
+              </Button>
+            )}
+            <Button
+              type="button"
+              variant="contained"
+              sx={{
+                width: "138px",
+                height: "48px",
+                borderRadius: "15px",
+              }}
+              onClick={
+                type === "confirm"
+                  ? () => {
+                      buttonOnPress();
+                      close();
+                    }
+                  : close
+              }
+            >
+              {buttonLabel}
+            </Button>
+          </Box>
+        </DialogActions>
       </Dialog>
+      {children}
     </AlertContext.Provider>
   );
 };
