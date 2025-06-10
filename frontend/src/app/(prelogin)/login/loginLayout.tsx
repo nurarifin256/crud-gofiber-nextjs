@@ -6,11 +6,11 @@ import React from 'react'
 const LoginLayout = ({
     children,
     title,
-    subtitle,
+    subTitle,
 }: Readonly<{
     children: React.ReactNode;
     title: string;
-    subtitle: string;
+    subTitle: string;
 }>) => {
   return (
     <Card
@@ -30,7 +30,7 @@ const LoginLayout = ({
                         {title}
                     </Typography>
                     <Typography variant="caption" component="h6" color="lightslategray" fontSize="0.7rem">
-                        {subtitle}
+                        {subTitle}
                     </Typography>
                     {children}
                 </Box>
