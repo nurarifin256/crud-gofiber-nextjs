@@ -6,6 +6,7 @@ import {
   Container,
   FormControl,
   IconButton,
+  InputAdornment,
   InputLabel,
   OutlinedInput,
   TextField,
@@ -15,6 +16,23 @@ import React, { useState } from "react";
 
 const FormLogin = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  const handleShowPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    setShowPassword((prev) => !prev);
+  };
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
+
+  const handleMouseUpPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
   return (
     <Container>
       <form autoComplete="off">
@@ -38,19 +56,26 @@ const FormLogin = () => {
             <OutlinedInput
               id="password"
               label="Password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               size="small"
               autoComplete="off"
               endAdornment={
-                <IconButton aria-label="toogle password visibility">
-                  {showPassword ? (
-                    <IconEye stroke={2} />
-                  ) : (
-                    <IconEyeOff stroke={2} />
-                  )}
-                </IconButton>
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={(e) => handleShowPassword(e)}
+                    onMouseDown={(e) => handleMouseDownPassword(e)}
+                    onMouseUp={(e) => handleMouseUpPassword(e)}
+                  >
+                    {showPassword ? (
+                      <IconEye stroke={2} />
+                    ) : (
+                      <IconEyeOff stroke={2} />
+                    )}
+                  </IconButton>
+                </InputAdornment>
               }
-            ></OutlinedInput>
+            />
           </FormControl>
 
           {/* button */}
