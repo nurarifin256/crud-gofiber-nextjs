@@ -1,6 +1,8 @@
 "use client";
 
+import { useAuthService } from "@/lib/services/auth/authService";
 import {
+  Alert,
   Box,
   Button,
   Container,
@@ -13,9 +15,18 @@ import {
 } from "@mui/material";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import React, { useState } from "react";
+import { useShallow } from "zustand/shallow";
 
 const FormLogin = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  // service auth
+  const {error, resetError} = useAuthService(
+    useShallow((state) => ({
+      error: state.error,
+      resetError: state.resetError,
+    }))
+  )
 
   const handleShowPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -35,6 +46,17 @@ const FormLogin = () => {
   };
   return (
     <Container>
+      {
+        error && (
+          <Alert
+            sx={{ mt:1, borderRadius: 2 }}
+            severity="error"
+            onClose={() => resetError()}
+          >
+            {error.message || "An error occurred, please try again."}
+          </Alert>
+        )
+      }
       <form autoComplete="off">
         <Box sx={{ mt: 1 }} display="flex" flexDirection="column">
           {/* email */}
