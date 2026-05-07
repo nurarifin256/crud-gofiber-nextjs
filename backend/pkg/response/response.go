@@ -1,3 +1,5 @@
+package response
+
 import (
 	"net/http"
 
@@ -26,19 +28,19 @@ func kindOf(code int) string {
 }
 
 func JSON(c *fiber.Ctx, code int, message interface{}, data interface{}, typeOpsional ...string) error {
-    responseType := kindOf(code) // default
-    
-    if len(typeOpsional) > 0 && typeOpsional[0] != "" {
-        responseType = typeOpsional[0]
-    }
-    
-    b := Body{
-        Code:    code,
-        Type:    responseType,
-        Message: message,
-        Data:    data,
-    }
-    return c.Status(code).JSON(b)
+	responseType := kindOf(code) // default
+
+	if len(typeOpsional) > 0 && typeOpsional[0] != "" {
+		responseType = typeOpsional[0]
+	}
+
+	b := Body{
+		Code:    code,
+		Type:    responseType,
+		Message: message,
+		Data:    data,
+	}
+	return c.Status(code).JSON(b)
 }
 
 // --- Success (200/201) ---
@@ -80,11 +82,15 @@ func Error(c *fiber.Ctx, code int, msg interface{}) error {
 }
 
 func UnauthorizedErr(msg string) error {
-	if msg == "" { msg = "Incorrect NIK or Password" }
+	if msg == "" {
+		msg = "Incorrect NIK or Password"
+	}
 	return fiber.NewError(fiber.StatusUnauthorized, msg)
 }
 
 func Errorf(status int, msg string) error {
-	if msg == "" { msg = http.StatusText(status) }
+	if msg == "" {
+		msg = http.StatusText(status)
+	}
 	return fiber.NewError(status, msg)
 }
