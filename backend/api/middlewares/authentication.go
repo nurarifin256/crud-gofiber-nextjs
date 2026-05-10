@@ -67,7 +67,7 @@ func (h *AuthMiddlewareHandler) Auth(c *fiber.Ctx) error {
 	}
 
 	// Find user in db
-	user, err := h.service.FindByNik(c.UserContext(), nikUser)
+	user, err := h.service.FindUserByNik(c.UserContext(), nikUser)
 	if err != nil {
 		zap.S().Errorf("User not found: %v", err)
 		return response.UnauthorizedErr(errorInvalid)
