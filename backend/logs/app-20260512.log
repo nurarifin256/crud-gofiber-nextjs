@@ -1,0 +1,2 @@
+{"level":"info","ts":"2026-05-12T20:58:20.508+0700","caller":"app/main.go:45","msg":"listening on 0.0.0.0:8001"}
+{"level":"info","ts":"2026-05-12T21:01:39.636+0700","caller":"app/main.go:45","msg":"listening on 0.0.0.0:8001"}

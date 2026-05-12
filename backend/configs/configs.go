@@ -16,7 +16,7 @@ type App struct {
 	Port            int
 	SecretKey       string
 	CorsAllowOrigin string
-	corsHeaders     string
+	CorsHeaders     string
 }
 
 type DBConf struct {
@@ -68,7 +68,7 @@ func Load() Config {
 			Port:            v.GetInt("APP_PORT"),
 			SecretKey:       v.GetString("SECRET_KEY"),
 			CorsAllowOrigin: v.GetString("CORS_ALLOW_ORIGIN"),
-			corsHeaders:     v.GetString("CORS_HEADERS"),
+			CorsHeaders:     v.GetString("CORS_HEADERS"),
 		},
 		DB: DBConf{
 			Driver:  v.GetString("DB_DRIVER"),

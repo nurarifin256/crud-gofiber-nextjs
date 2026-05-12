@@ -23,4 +23,4 @@ type User struct {
 	UpdatedAt     *time.Time `gorm:"column:updated_at;type:timestamp(0)" json:"updated_at,omitempty"`
 }
 
-func (User) TableName() string { return "m_user" }
+func (User) TableName() string { return "m_users" }
