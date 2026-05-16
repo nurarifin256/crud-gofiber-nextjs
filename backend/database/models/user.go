@@ -12,11 +12,9 @@ type User struct {
 	Email         *string    `gorm:"column:email;type:varchar(255)" json:"email,omitempty"`
 	PhoneNumber   *string    `gorm:"column:phone_number;type:varchar(255)" json:"phone_number,omitempty"`
 	Password      string     `gorm:"column:password;type:varchar(255);not null" json:"password"`
-	DepartementID *int32     `gorm:"column:departement_id;type:varchar(255)" json:"departement_id,omitempty"`
+	DepartementID *int32     `gorm:"column:departement_id;type:int4" json:"departement_id,omitempty"`
 	Picture       *string    `gorm:"column:picture;type:varchar(255)" json:"picture,omitempty"`
 	RememberToken *string    `gorm:"column:remember_token;type:varchar(255)" json:"-"`
-	CreatedNik    *string    `gorm:"column:created_nik;type:varchar(255)" json:"created_nik,omitempty"`
-	UpdatedNik    *string    `gorm:"column:updated_nik;type:varchar(255)" json:"updated_nik,omitempty"`
 	CreatedBy     *string    `gorm:"column:created_by;type:varchar(50)" json:"created_by,omitempty"`
 	UpdatedBy     *string    `gorm:"column:updated_by;type:varchar(50)" json:"updated_by,omitempty"`
 	CreatedAt     *time.Time `gorm:"column:created_at;type:timestamp(0)" json:"created_at,omitempty"`

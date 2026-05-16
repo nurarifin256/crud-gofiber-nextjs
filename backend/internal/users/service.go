@@ -4,6 +4,7 @@ import "context"
 
 type Service interface {
 	FindUserByNik(ctx context.Context, nik string) (*User, error)
+	SubmitUser(ctx context.Context, req SubmitUserRequest, picture string) (*User, error)
 }
 
 type ServiceImpl struct {
@@ -18,4 +19,8 @@ func NewUserService(repo Repository) Service {
 
 func (s *ServiceImpl) FindUserByNik(ctx context.Context, nik string) (*User, error) {
 	return s.repo.FindUserByNik(ctx, nik)
+}
+
+func (s *ServiceImpl) SubmitUser(ctx context.Context, req SubmitUserRequest, picture string) (*User, error) {
+	return s.repo.SubmitUser(ctx, req, picture)
 }

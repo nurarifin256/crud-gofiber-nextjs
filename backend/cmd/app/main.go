@@ -55,8 +55,6 @@ func main() {
 	// stop http first
 	_ = app.Shutdown()
 
-	// test github action
-
 	// give in-flight job up to 3m (runner.Stop() will wait running jobs to finish)
 	_, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
 	defer cancel()
