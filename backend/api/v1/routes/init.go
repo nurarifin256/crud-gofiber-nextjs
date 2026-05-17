@@ -2,6 +2,7 @@ package routes
 
 import (
 	v1_auth "simple-crud/api/v1/routes/authentications"
+	v1_user "simple-crud/api/v1/routes/user"
 	"simple-crud/pkg/appcontext"
 
 	"github.com/gofiber/fiber/v2"
@@ -21,4 +22,6 @@ func RouteV1(app *fiber.App) {
 func init() {
 	// Register authentication routes
 	appcontext.RegisterRouteInitializer("auth", v1_auth.NewAuthRouteInitializer())
+	// Register user routes
+	appcontext.RegisterRouteInitializer("user", v1_user.NewUserRouteInitializer())
 }

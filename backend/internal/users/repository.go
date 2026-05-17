@@ -3,12 +3,14 @@ package user
 import (
 	"context"
 
+	model "simple-crud/database/models"
+
 	"gorm.io/gorm"
 )
 
 type Repository interface {
-	FindUserByNik(ctx context.Context, nik string) (*User, error)
-	SubmitUser(ctx context.Context, req SubmitUserRequest, picture string) (*User, error)
+	FindUserByNik(ctx context.Context, nik string) (*model.User, error)
+	SubmitUser(ctx context.Context, req SubmitUserRequest, picture string, password string) (*model.User, error)
 }
 
 type UserRepositoryImpl struct {
@@ -21,8 +23,8 @@ func NewUserRepository(DB *gorm.DB) Repository {
 	}
 }
 
-func (r *UserRepositoryImpl) FindUserByNik(ctx context.Context, nik string) (*User, error) {
-	var user User
+func (r *UserRepositoryImpl) FindUserByNik(ctx context.Context, nik string) (*model.User, error) {
+	var user model.User
 	query := `
 		SELECT
 			u.id,
@@ -53,21 +55,27 @@ func (r *UserRepositoryImpl) FindUserByNik(ctx context.Context, nik string) (*Us
 	return &user, nil
 }
 
-func (r *UserRepositoryImpl) SubmitUser(ctx context.Context, req SubmitUserRequest, picture string) (*User, error) {
+func (r *UserRepositoryImpl) SubmitUser(
+	ctx context.Context,
+	req SubmitUserRequest,
+	picture string,
+	password string,
+) (*model.User, error) {
+
 	tx := r.DB.WithContext(ctx).Begin()
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
 
-	user := &User{
-		RoleID:        req.RoleID,
-		Name:          req.Name,
-		NIK:           req.NIK,
-		Email:         req.Email,
-		PhoneNumber:   req.PhoneNumber,
-		Password:      req.Password, // nanti hash dulu
-		DepartementID: req.DepartementID,
-		Picture:       &picture,
+	user := &model.User{
+		RoleID:       req.RoleID,
+		Name:         req.Name,
+		NIK:          req.NIK,
+		Email:        req.Email,
+		PhoneNumber:  req.PhoneNumber,
+		Password:     password,
+		DepartmentID: req.DepartmentID,
+		Picture:      &picture,
 	}
 
 	if err := tx.Create(user).Error; err != nil {

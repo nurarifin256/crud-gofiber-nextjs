@@ -1,10 +1,14 @@
 package user
 
-import "context"
+import (
+	"context"
+	model "simple-crud/database/models"
+	"simple-crud/helpers"
+)
 
 type Service interface {
-	FindUserByNik(ctx context.Context, nik string) (*User, error)
-	SubmitUser(ctx context.Context, req SubmitUserRequest, picture string) (*User, error)
+	FindUserByNik(ctx context.Context, nik string) (*model.User, error)
+	SubmitUser(ctx context.Context, req SubmitUserRequest, picture string) (*model.User, error)
 }
 
 type ServiceImpl struct {
@@ -17,10 +21,11 @@ func NewUserService(repo Repository) Service {
 	}
 }
 
-func (s *ServiceImpl) FindUserByNik(ctx context.Context, nik string) (*User, error) {
+func (s *ServiceImpl) FindUserByNik(ctx context.Context, nik string) (*model.User, error) {
 	return s.repo.FindUserByNik(ctx, nik)
 }
 
-func (s *ServiceImpl) SubmitUser(ctx context.Context, req SubmitUserRequest, picture string) (*User, error) {
-	return s.repo.SubmitUser(ctx, req, picture)
+func (s *ServiceImpl) SubmitUser(ctx context.Context, req SubmitUserRequest, picture string) (*model.User, error) {
+	password := helpers.HashPassword(req.Password)
+	return s.repo.SubmitUser(ctx, req, picture, password)
 }

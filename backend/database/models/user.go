@@ -12,7 +12,7 @@ type User struct {
 	Email         *string    `gorm:"column:email;type:varchar(255)" json:"email,omitempty"`
 	PhoneNumber   *string    `gorm:"column:phone_number;type:varchar(255)" json:"phone_number,omitempty"`
 	Password      string     `gorm:"column:password;type:varchar(255);not null" json:"password"`
-	DepartementID *int32     `gorm:"column:departement_id;type:int4" json:"departement_id,omitempty"`
+	DepartmentID  *int32     `gorm:"column:department_id;type:int4" json:"department_id,omitempty"`
 	Picture       *string    `gorm:"column:picture;type:varchar(255)" json:"picture,omitempty"`
 	RememberToken *string    `gorm:"column:remember_token;type:varchar(255)" json:"-"`
 	CreatedBy     *string    `gorm:"column:created_by;type:varchar(50)" json:"created_by,omitempty"`
